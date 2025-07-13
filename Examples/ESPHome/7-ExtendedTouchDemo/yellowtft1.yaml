@@ -57,8 +57,10 @@ ota:
 
 # Setup WiFi credentials
 wifi:
-  ssid: !secret wifi_ssid
-  password: !secret wifi_password
+  ssid: !secret wifi_iot_ssid
+  password: !secret wifi_iot_password
+  use_address: 192.168.20.29
+
 
   # Enable fallback hotspot (captive portal) in case wifi connection fails
   ap:
@@ -220,12 +222,14 @@ interval:
 # Display is used as 240x320 by default so we rotate it to 90°
 display:
   - platform: ili9xxx
-    model: ili9341
+    invert_colors: False
+    color_palette: 8BIT    #REQUIRED for 2025.2 Esphome to work.
+    model: M5STACK
     spi_id: tft
     cs_pin: GPIO15
     dc_pin: GPIO2
     transform:
-      swap_xy: true
+      mirror_x: true    # This will fix the mirroring
     dimensions:
       width: 320
       height: 240
