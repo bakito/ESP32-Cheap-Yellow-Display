@@ -60,7 +60,8 @@ ota:
 wifi:
   ssid: !secret wifi_iot_ssid
   password: !secret wifi_iot_password
-  use_address: 1.2.3.4
+  use_address: 192.168.20.29
+
 
   # Enable fallback hotspot (captive portal) in case wifi connection fails
   ap:
@@ -144,7 +145,7 @@ output:
 #
 display:
   - platform: ili9xxx
-    invert_colors: False
+    invert_colors: True
     color_palette: 8BIT    #REQUIRED for 2025.2 Esphome to work.
     model: M5STACK
     spi_id: tft
