@@ -1,3 +1,4 @@
+# https://github.com/witnessmenow/ESP32-Cheap-Yellow-Display/blob/main/Examples/ESPHome/2-ESPHomeClock/yellowtft1.yaml
 #
 # Basic yaml code to get the ESP32-2432S028R display to work in ESPHome.
 #
@@ -34,6 +35,7 @@ substitutions:
 esphome:
   name: $device_name
   friendly_name: $friendly_name
+  compile_process_limit: 1
  
 # The ESP32-2432S028R uses a standard ESP32-WROVER, so we use the esp32dev defintion
 esp32:
@@ -47,22 +49,29 @@ logger:
 # Enable Home Assistant API
 api:
   encryption:
-    key: !secret api_key
+    key: "wXHxyVKAcajhyoYCix9fSlLvWobDmcDxfB+Vg8PBGIc="
 
 # Set OTA password
 ota:
   platform: esphome
-  password: !secret ota_password
+  password: !secret api_ota_pass
 
 # Setup WiFi credentials
 wifi:
-  ssid: !secret wifi_ssid
-  password: !secret wifi_password
+  ssid: !secret wifi_iot_ssid
+  password: !secret wifi_iot_password
+  use_address: 1.2.3.4
 
   # Enable fallback hotspot (captive portal) in case wifi connection fails
   ap:
     ssid: $device_name Fallback Hotspot
-    password: !secret ap_password
+    password: !secret api_ota_pass
+
+web_server:
+  port: 80
+  auth:
+    username: admin
+    password: !secret api_ota_pass
 
 captive_portal:
 
@@ -89,7 +98,7 @@ color:
 image:
   - file: "images/esphome.png"
     id: esphome_image
-    type: RGB24
+    type: RGB
 
 # ============================================================ 
 # Home Assistant related setup
@@ -135,11 +144,15 @@ output:
 #
 display:
   - platform: ili9xxx
-    model: ili9341
+    invert_colors: False
+    color_palette: 8BIT    #REQUIRED for 2025.2 Esphome to work.
+    model: M5STACK
     spi_id: tft
     cs_pin: GPIO15
     dc_pin: GPIO2
-    rotation: 90
+    reset_pin: GPIO0 
+    transform:
+      mirror_x: true    # This will fix the mirroring
     lambda: |-
       it.fill(id(ha_blue));
       it.image(120,10, id(esphome_image));
